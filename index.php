@@ -9,6 +9,8 @@
 	$email="";
 	$telefono="";
 	$comentario="";
+	$cuerpoMail="";
+	
 
 	if(isset($_POST['enviar'])) {
 		$nombre=$_POST['nombre'];
@@ -31,14 +33,14 @@
 		$fileName=$_FILES['fichero']['name'];
 		if(!isEmpty($fileName)){
 			if(subirFicheros($_FILES['fichero'],102400,$errores)){
-			
+				echo "entro";
 			} else
 				$fileName="";
 
 		}
 
 		$codigo=obtenerCodigo();
-		$fileName="";
+	
 		if($fileName==="")
 			$linea="$fecha;$email;$nombre;$comentario;$codigo";
 		else 
@@ -83,10 +85,7 @@
 		    	<div class="container col-lg-10 bg-ligth">
 					<h2>CONTACTO</h2>
 					<p>Los campos marcados con * son obligatorios.</p><br>
-					<?php 
-						showErrors($errores);
-					?>
-					<form name="form" method="post" action='#' enctype="multipart/form-data">
+						<form name="form" method="post" action='#' enctype="multipart/form-data">
 						<div class="form-group">
 							<label for="nombre">Nombre: * </label>
 							<input type="text" 
@@ -127,33 +126,45 @@
 							type="submit" 
 							name="enviar"
 							id="enviar" 
-							value="Enviar"><br><br>
-						<span id='mensajes'></span>
+							value="Enviar">
+
+						<span id='mensajes'>
+						<?php
+
+						if ((count($errores)==0 && isset($_POST['enviar']))){
+							$cuerpoMail="<h6>Fecha  $fecha</h6>";
+							$cuerpoMail.="<h6>Remitente $nombre</h6>";
+							$cuerpoMail.="<h6>Teléfono $telefono</h6>";
+							$cuerpoMail.="<h6>Mensaje $comentario</h6>";
+						
+							$cuerpoMail.="<h6>Código consulta $codigo</h6>";
+							if(isset($fileName))
+								$cuerpoMail.="<h6>Nombre fichero $fileName</h6>";
+							else
+							$cuerpoMail.="<h6>Nombre fichero </h6>";	
+							mail($email,"Correo de contacto",$cuerpoMail);
+							;
+							echo "<b> Correo 
+							enviado sadisfactoriamente.</b>";
+						?>
+						</span>
 						
 						</div>
 					</form>
 					<hr>
 					
 					<?php 
-					 if ((count($errores)==0 && isset($_POST['enviar']))){ 
+					 
+						
 						echo "<div class='card correo px-3 py-2'>";
-						echo "<h6>Fecha  $fecha</h6>";
-						echo "<h6>Remitente $nombre</h6>";
-						echo "<h6>Teléfono $telefono</h6>";
-						echo "<h6>Mensaje $comentario</h6>";
-					
-						echo "<h6>Código consulta $codigo</h6>";
-						if(isset($fileName))
-							echo "<h6>Nombre fichero $fileName</h6>";
-						else
-							echo "<h6>Nombre fichero </h6>";
+						echo $cuerpoMail;
 						echo "</div>";
 					 } elseif((count($errores)>0 && $fileName!=="")) {
-						 borrarFichero($fileName);
-
-					 }
-	
-
+						borrarFichero($fileName); 
+						
+					}
+					if(count($errores)>0) showErrors($errores);
+					
 
 					?>
 
