@@ -1,26 +1,4 @@
 <?php
-// retorna false(0) si hay errror o el DNI validado y con letra si no hay error 
-function validateDNI($dni)
-{
-    $str = trim($dni);
-    $str = str_replace("-", "", $str);
-    $str = str_ireplace(" ", "", $str);
-    $n = substr($str, 0, strlen($str) - 1);
-    $n = intval($n);
-    if (!is_int($n)) {
-        return false;
-    }
-    $l = substr($str, -1);
-    if (!is_string($l)) {
-        return false;
-    }
-    $letra = substr("TRWAGMYFPDXBNJZSQVHLCKE", $n % 23, 1);
-    if (strtolower($l) == strtolower($letra)) {
-        return $n . $l;
-    } else {
-        return false;
-    }
-}
 
 //Función que valida el Email develovera True o false, dependiendo si el valor
 // es correcto o no
@@ -75,14 +53,17 @@ function showErrors($errores)
 		echo $e->getMessage();
 	}
 }
-
+//Sube el fichero al servidor
+// $file $_FILES['fichero'] pasado por parametro
+// $masFileSize tamaño maximo de fichero en byte
+// &$errores array que contiene los errores
 function subirFicheros($file,$maxFileSize,&$errors){
     
     try{
         $fileTmpPath = $file['tmp_name'];
         $fileName = $file['name'];
         $fileSize = $file['size'];
-        $fileType = $file['type'];
+    
         $fileNameCmps = explode(".", $fileName);
         $fileExtension = strtolower(end($fileNameCmps));
         $newFileName=$fileName;
@@ -101,7 +82,7 @@ function subirFicheros($file,$maxFileSize,&$errors){
      
                 if(!move_uploaded_file($fileTmpPath, $dest_path))
                 {
-                    $message ='El fichero ya existe.';
+                    $message ='Hubo algun problema al cargar el fichero.';
                     throw new Exception($message, 10);
                     
                 }
@@ -111,8 +92,6 @@ function subirFicheros($file,$maxFileSize,&$errors){
             {
                 $message = 'El fichero debe tener una de estas extensiones (jpg,jpeg,png,svg)';
                 throw new Exception($message, 10);
-                
-                
             }
         }
         //la subida ha tenido exito
@@ -125,6 +104,10 @@ function subirFicheros($file,$maxFileSize,&$errors){
 
 } 
 
+///Función encargada de escribir en el Log
+///Parametros
+///$linea -> Linea del fichero en formato csv a grabar
+///$erroes -> Array de errores que se mostrara con la función showErrors
 function escribirLog($linea,&$errors){
     try{
         $fecha = new DateTime();

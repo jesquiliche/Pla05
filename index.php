@@ -49,18 +49,6 @@
 		$texto=leerCSV("./archivos/log.txt");
 	}
 
-	
-	//comprobar si se ha pulsado el botón de enviar
-	
-		//recuperar y validar datos obligatorios
-			
-		//si se ha seleccionado un fichero moverlo a la carpeta 'archivos'
-			
-		//confeccionar y enviar mensaje de correo
-			
-		//guardar correo enviado en el archivo de log en formato csv;
-
-	//confeccionar filas de la tabla con los correos enviados
 	function resetearCampos(){
 		$errores=array();
 		$fecha=date('d-m-Y');
@@ -68,8 +56,7 @@
 		$email="";
 		$telefono="";
 		$comentario="";
-		$cuerpoMail="";
-		
+		$cuerpoMail="";	
 	}
 ?>
 <!DOCTYPE html>
@@ -171,8 +158,6 @@
 					<hr>
 					
 					<?php 
-					 
-						
 						echo "<div class='card correo px-3 py-2'>";
 						echo $cuerpoMail;
 						echo "</div>";
