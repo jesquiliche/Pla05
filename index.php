@@ -1,63 +1,67 @@
 <?php
-	require_once './utils/utils.php';
-	
+require_once './utils/utils.php';
 
-	//inicializar variables
-	$errores=array();
-	$fecha=date('d-m-Y');
-	$nombre="";
-	$email="";
-	$telefono="";
-	$comentario="";
-	$cuerpoMail="";
-	
+//inicializar variables
+$errores = array();
+$fecha = date('d-m-Y');
+$nombre = "";
+$email = "";
+$telefono = "";
+$comentario = "";
+$cuerpoMail = "";
 
-	if(isset($_POST['enviar'])) {
-		$nombre=$_POST['nombre'];
-		if(isEmpty($nombre)) 
-			array_push($errores,"El nombre es requerido");
-		
+if (isset($_POST['enviar'])) {
+    $nombre = $_POST['nombre'];
+    if (isEmpty($nombre)) {
+        array_push($errores, "El nombre es requerido");
+    }
 
-		$email=$_POST['email'];
-		if(!validateEmail($email)) 
-			array_push($errores,"El email incorrecto o no informado.");
+    $email = $_POST['email'];
+    if (!validateEmail($email)) {
+        array_push($errores, "El email incorrecto o no informado.");
+    }
 
-		$telefono=$_POST['telefono'];
-		if(!validatePhone($telefono)) 
-			array_push($errores,"formato teléfono incorrecto");
+    $telefono = $_POST['telefono'];
+    if (!validatePhone($telefono)) {
+        array_push($errores, "formato teléfono incorrecto");
+    }
 
-		$comentario=$_POST['comentario'];
-		if(isEmpty($comentario)) 
-			array_push($errores,"El comentario es requerido");
+    $comentario = $_POST['comentario'];
+    if (isEmpty($comentario)) {
+        array_push($errores, "El comentario es requerido");
+    }
 
-		$fileName=$_FILES['fichero']['name'];
-		if(!isEmpty($fileName)){
-			if(subirFicheros($_FILES['fichero'],102400,$errores)){
-				echo "entro";
-			} else
-				$fileName="";
+    $fileName = $_FILES['fichero']['name'];
+    if (!isEmpty($fileName)) {
+        if (subirFicheros($_FILES['fichero'], 102400, $errores)) {
+        
+        } else {
+            $fileName = "";
+        }
 
-		}
+    }
 
-		$codigo=obtenerCodigo();
-	
-		if($fileName==="")
-			$linea="$fecha;$email;$nombre;$comentario;$codigo";
-		else 
-			$linea="$fecha;$email;$nombre;$comentario;$codigo;$fileName";
-		
-		$texto=leerCSV("./archivos/log.txt");
-	}
+    $codigo = obtenerCodigo();
 
-	function resetearCampos(){
-		$errores=array();
-		$fecha=date('d-m-Y');
-		$nombre="";
-		$email="";
-		$telefono="";
-		$comentario="";
-		$cuerpoMail="";	
-	}
+    if ($fileName === "") {
+        $linea = "$fecha;$email;$nombre;$comentario;$codigo";
+    } else {
+        $linea = "$fecha;$email;$nombre;$comentario;$codigo;$fileName";
+    }
+
+    $texto = leerCSV("./archivos/log.txt");
+}
+
+function resetearCampos()
+{
+    $errores = array();
+    $fecha = date('d-m-Y');
+    $nombre = "";
+    $email = "";
+    $telefono = "";
+    $comentario = "";
+    $cuerpoMail = "";
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -84,32 +88,32 @@
 						<form name="form" method="post" action='#' enctype="multipart/form-data">
 						<div class="form-group">
 							<label for="nombre">Nombre: * </label>
-							<input type="text" 
-								name="nombre" id="nombre" 
+							<input type="text"
+								name="nombre" id="nombre"
 								class="form-control"
 								value=<?=$nombre?>>
 						</div>
 						<div class="form-group">
 							<label for="email">Email: * </label>
-							<input type="email" 
-								name="email" 
-								id="email" 
-								placeholder="nom@mail.com" 
+							<input type="email"
+								name="email"
+								id="email"
+								placeholder="nom@mail.com"
 								class="form-control"
 								value=<?=$email?>>
-								
+
 						</div>
 						<div class="form-group">
 							<label for="telefono">Teléfono: </label>
-							<input type="tel" 
-								name="telefono" 
+							<input type="tel"
+								name="telefono"
 								id="telefono" class="form-control"
 								value=<?=$telefono?>>
 						</div>
 						<div class="form-group">
 							<label>Mensaje: *</label><br><br>
-							<textarea id="comentario" 
-							name="comentario" 
+							<textarea id="comentario"
+							name="comentario"
 							class="form-control"
 							placeholder="Introduzca aquí su pregunta o comentario"><?=$comentario?></textarea>
 						</div>
@@ -118,57 +122,62 @@
 						</div>
 						<div>
 						<input id="enviar"
-							class="btn btn-primary mt-3" 
-							type="submit" 
+							class="btn btn-primary mt-3"
+							type="submit"
 							name="enviar"
-							id="enviar" 
+							id="enviar"
 							value="Enviar">
 
 						<span id='mensajes'>
 						<?php
 
-						if ((count($errores)==0 && isset($_POST['enviar']))){
-							try{
-								$cuerpoMail="<h6>Fecha  $fecha</h6>";
-								$cuerpoMail.="<h6>Remitente $nombre</h6>";
-								$cuerpoMail.="<h6>Teléfono $telefono</h6>";
-								$cuerpoMail.="<h6>Mensaje $comentario</h6>";
-							
-								$cuerpoMail.="<h6>Código consulta $codigo</h6>";
-								if(isset($fileName))
-									$cuerpoMail.="<h6>Nombre fichero $fileName</h6>";
-								else
-								$cuerpoMail.="<h6>Nombre fichero </h6>";	
-								mail($email,"Correo de contacto","<html><body>".$cuerpoMail."</body></html>");
-								escribirLog($linea,$errores);
-								resetearCampos();
-								echo "<b> Correo 
+if ((count($errores) == 0 && isset($_POST['enviar']))) {
+    try {
+        $cuerpoMail = "<h6>Fecha  $fecha</h6>";
+        $cuerpoMail .= "<h6>Remitente $nombre</h6>";
+        $cuerpoMail .= "<h6>Teléfono $telefono</h6>";
+        $cuerpoMail .= "<h6>Mensaje $comentario</h6>";
+
+        $cuerpoMail .= "<h6>Código consulta $codigo</h6>";
+        if (isset($fileName)) {
+            $cuerpoMail .= "<h6>Nombre fichero $fileName</h6>";
+        } else {
+            $cuerpoMail .= "<h6>Nombre fichero </h6>";
+        }
+
+        mail($email, "Correo de contacto", "<html><body>" . $cuerpoMail . "</body></html>");
+        escribirLog($linea, $errores);
+        resetearCampos();
+        echo "<b> Correo
 								enviado sad
 								satisfactoriamente.</b>";
-							} catch(Exception $e) {
-								if(isset($fileName)) borrarFichero($fileName);
-								
-							}
-						
-						?>
+    } catch (Exception $e) {
+        if (isset($fileName)) {
+            borrarFichero($fileName);
+        }
+
+    }
+
+    ?>
 						</span>
-						
+
 						</div>
 					</form>
 					<hr>
-					
-					<?php 
-						echo "<div class='card correo px-3 py-2'>";
-						echo $cuerpoMail;
-						echo "</div>";
-					 } elseif((count($errores)>0 && $fileName!=="")) {
-						borrarFichero($fileName); 
-						
-					}
-					if(count($errores)>0) showErrors($errores);
-					
 
-					?>
+					<?php
+echo "<div class='card correo px-3 py-2'>";
+    echo $cuerpoMail;
+    echo "</div>";
+} elseif ((count($errores) > 0 && $fileName !== "")) {
+    borrarFichero($fileName);
+
+}
+if (count($errores) > 0) {
+    showErrors($errores);
+}
+
+?>
 
 
 
@@ -178,14 +187,14 @@
 											</div>
 				</div>
 				<?php
-					dibujarTabla(leerCSV('./archivos/log.txt'));
-				?>
+dibujarTabla(leerCSV('./archivos/log.txt'));
+?>
 		    </div>
-			
-				
-			
+
+
+
 
 		</div>
 	</div>
 </body>
-</html> 
+</html>
