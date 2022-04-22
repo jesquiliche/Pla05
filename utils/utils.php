@@ -130,14 +130,15 @@ function escribirLog($linea,&$errors){
         $fecha = new DateTime();
         
         $fileContent = file_get_contents("./archivos/log.txt");
-        if(file_exists("./archivos/log.txt"))
-            unlink("./archivos/log.txt");
-        $file = fopen("./archivos/log.txt", "a");
+      
+        $file = fopen("./archivos/log.txt", "w+");
+        flock($file,LOCK_EX);
         fwrite($file,$linea."\n");
         fwrite($file,$fileContent );
     }catch(Exception $e){
         array_push($errores,$e->getMessage());
     }finally{
+        flock ($file, LOCK_UN); 
         fclose($file);
     }
 }

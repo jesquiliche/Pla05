@@ -45,7 +45,7 @@
 			$linea="$fecha;$email;$nombre;$comentario;$codigo";
 		else 
 			$linea="$fecha;$email;$nombre;$comentario;$codigo;$fileName";
-		escribirLog($linea,$errores);
+		
 		$texto=leerCSV("./archivos/log.txt");
 	}
 
@@ -61,7 +61,16 @@
 		//guardar correo enviado en el archivo de log en formato csv;
 
 	//confeccionar filas de la tabla con los correos enviados
-
+	function resetearCampos(){
+		$errores=array();
+		$fecha=date('d-m-Y');
+		$nombre="";
+		$email="";
+		$telefono="";
+		$comentario="";
+		$cuerpoMail="";
+		
+	}
 ?>
 <!DOCTYPE html>
 <html>
@@ -132,20 +141,27 @@
 						<?php
 
 						if ((count($errores)==0 && isset($_POST['enviar']))){
-							$cuerpoMail="<h6>Fecha  $fecha</h6>";
-							$cuerpoMail.="<h6>Remitente $nombre</h6>";
-							$cuerpoMail.="<h6>Teléfono $telefono</h6>";
-							$cuerpoMail.="<h6>Mensaje $comentario</h6>";
+							try{
+								$cuerpoMail="<h6>Fecha  $fecha</h6>";
+								$cuerpoMail.="<h6>Remitente $nombre</h6>";
+								$cuerpoMail.="<h6>Teléfono $telefono</h6>";
+								$cuerpoMail.="<h6>Mensaje $comentario</h6>";
+							
+								$cuerpoMail.="<h6>Código consulta $codigo</h6>";
+								if(isset($fileName))
+									$cuerpoMail.="<h6>Nombre fichero $fileName</h6>";
+								else
+								$cuerpoMail.="<h6>Nombre fichero </h6>";	
+								mail($email,"Correo de contacto","<html><body>".$cuerpoMail."</body></html>");
+								escribirLog($linea,$errores);
+								resetearCampos();
+								echo "<b> Correo 
+								enviado sadisfactoriamente.</b>";
+							} catch(Exception $e) {
+								if(isset($fileName)) borrarFichero($fileName);
+								
+							}
 						
-							$cuerpoMail.="<h6>Código consulta $codigo</h6>";
-							if(isset($fileName))
-								$cuerpoMail.="<h6>Nombre fichero $fileName</h6>";
-							else
-							$cuerpoMail.="<h6>Nombre fichero </h6>";	
-							mail($email,"Correo de contacto",$cuerpoMail);
-							;
-							echo "<b> Correo 
-							enviado sadisfactoriamente.</b>";
 						?>
 						</span>
 						
