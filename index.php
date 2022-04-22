@@ -144,16 +144,17 @@ if ((count($errores) == 0 && isset($_POST['enviar']))) {
         } else {
             $cuerpoMail .= "<h6>Nombre fichero </h6>";
         }
-
+		
         mail($email, "Correo de contacto", "<html><body>" . $cuerpoMail . "</body></html>");
         escribirLog($linea, $errores);
         resetearCampos();
-        echo "<b> Correo
-								enviado sad
-								satisfactoriamente.</b>";
+        echo "<b> Correo enviado satisfactoriamente.</b>";
     } catch (Exception $e) {
         if (isset($fileName)) {
-            borrarFichero($fileName);
+			//Si falla el envio del correo borrar el fichero
+			// e informar del error
+			array_push($errores,$e->getMessage());
+            borrarFichero(getcwd()."/archivos/$fileName");
         }
 
     }
@@ -170,7 +171,7 @@ echo "<div class='card correo px-3 py-2'>";
     echo $cuerpoMail;
     echo "</div>";
 } elseif ((count($errores) > 0 && $fileName !== "")) {
-    borrarFichero($fileName);
+	
 
 }
 if (count($errores) > 0) {
