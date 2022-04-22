@@ -156,7 +156,8 @@
 								escribirLog($linea,$errores);
 								resetearCampos();
 								echo "<b> Correo 
-								enviado sadisfactoriamente.</b>";
+								enviado sad
+								satisfactoriamente.</b>";
 							} catch(Exception $e) {
 								if(isset($fileName)) borrarFichero($fileName);
 								
