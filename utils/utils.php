@@ -131,6 +131,7 @@ function escribirLog($linea, &$errors)
     }
 }
 
+
 function obtenerCodigo()
 {
     $textKey = "A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Z5";
@@ -143,18 +144,21 @@ function obtenerCodigo()
     return $clave;
 }
 
+//Lee todas las lineas del archivo del archivo CSV y
+//las monta en un un array de dos dimensiones 
 function leerCSV($archivoCSV, $delimitador = ";"): array
 {
     $file_handle = fopen($archivoCSV, 'r');
 
     while (!feof($file_handle)) {
-        $linea_de_texto[] = fgetcsv($file_handle, 1024, $delimitador);
+        $linea_de_textos[] = fgetcsv($file_handle, 1024, $delimitador);
     }
     fclose($file_handle);
-    return $linea_de_texto;
+    return $linea_de_textos;
 
 }
 
+//Presenta la tabla en el formulario
 function dibujarTabla($arrayCSV)
 {
     error_reporting(0);
